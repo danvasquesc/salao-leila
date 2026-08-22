@@ -1,0 +1,96 @@
+package br.com.dsin.salaoleila.model;
+
+import br.com.dsin.salaoleila.model.Cliente;
+import br.com.dsin.salaoleila.model.Servico;
+import jakarta.persistence.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = "agendamentos")
+public class Agendamento {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private LocalDate data;
+
+    @Column(nullable = false)
+    private LocalTime horario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StatusAgendamento status;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cliente_id", nullable = false)
+    private Cliente cliente;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "servico_id", nullable = false)
+    private Servico servico;
+
+    public Agendamento() {
+    }
+
+    public Agendamento(
+            LocalDate data,
+            LocalTime horario,
+            StatusAgendamento status,
+            Cliente cliente,
+            Servico servico) {
+
+        this.data = data;
+        this.horario = horario;
+        this.status = status;
+        this.cliente = cliente;
+        this.servico = servico;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public LocalDate getData() {
+        return data;
+    }
+
+    public void setData(LocalDate data) {
+        this.data = data;
+    }
+
+    public LocalTime getHorario() {
+        return horario;
+    }
+
+    public void setHorario(LocalTime horario) {
+        this.horario = horario;
+    }
+
+    public StatusAgendamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusAgendamento status) {
+        this.status = status;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Servico getServico() {
+        return servico;
+    }
+
+    public void setServico(Servico servico) {
+        this.servico = servico;
+    }
+}
