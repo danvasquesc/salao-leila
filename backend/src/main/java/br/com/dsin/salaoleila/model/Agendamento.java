@@ -1,7 +1,5 @@
 package br.com.dsin.salaoleila.model;
 
-import br.com.dsin.salaoleila.model.Cliente;
-import br.com.dsin.salaoleila.model.Servico;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
