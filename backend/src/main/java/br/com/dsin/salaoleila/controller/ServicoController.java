@@ -1,8 +1,6 @@
 package br.com.dsin.salaoleila.controller;
 
-import br.com.dsin.salaoleila.dto.request.ClienteRequest;
 import br.com.dsin.salaoleila.dto.request.ServicoRequest;
-import br.com.dsin.salaoleila.dto.response.ClienteResponse;
 import br.com.dsin.salaoleila.dto.response.ServicoResponse;
 import br.com.dsin.salaoleila.service.ServicoService;
 import jakarta.validation.Valid;

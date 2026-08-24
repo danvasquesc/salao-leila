@@ -19,8 +19,6 @@ public class Cliente {
     @Column(length = 100)
     private String email;
 
-    // Construtores sem anotacoes @NoArgsConstructor
-    //@AllArgsConstructor para mostrar construcao
     public Cliente() {
     }
 

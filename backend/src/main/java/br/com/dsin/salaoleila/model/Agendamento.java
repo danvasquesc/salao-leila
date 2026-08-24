@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "agendamentos")
@@ -27,9 +29,12 @@ public class Agendamento {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "servico_id", nullable = false)
-    private Servico servico;
+    @OneToMany(
+            mappedBy = "agendamento",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<AgendamentoServico> servicos = new ArrayList<>();
 
     public Agendamento() {
     }
@@ -38,14 +43,12 @@ public class Agendamento {
             LocalDate data,
             LocalTime horario,
             StatusAgendamento status,
-            Cliente cliente,
-            Servico servico) {
+            Cliente cliente) {
 
         this.data = data;
         this.horario = horario;
         this.status = status;
         this.cliente = cliente;
-        this.servico = servico;
     }
 
     public Long getId() {
@@ -84,11 +87,19 @@ public class Agendamento {
         this.cliente = cliente;
     }
 
-    public Servico getServico() {
-        return servico;
+    public List<AgendamentoServico> getServicos() {
+        return servicos;
     }
 
-    public void setServico(Servico servico) {
-        this.servico = servico;
+    public void adicionarServico(Servico servico) {
+
+        AgendamentoServico agendamentoServico =
+                new AgendamentoServico(this, servico);
+
+        this.servicos.add(agendamentoServico);
+    }
+
+    public void removerServicos() {
+        this.servicos.clear();
     }
 }
