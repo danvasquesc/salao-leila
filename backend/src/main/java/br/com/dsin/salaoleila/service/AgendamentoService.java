@@ -1,6 +1,7 @@
 package br.com.dsin.salaoleila.service;
 
 import br.com.dsin.salaoleila.dto.request.AgendamentoRequest;
+import br.com.dsin.salaoleila.dto.request.AgendamentoUpdateRequest;
 import br.com.dsin.salaoleila.dto.response.AgendamentoResponse;
 import br.com.dsin.salaoleila.dto.response.ClienteResponse;
 import br.com.dsin.salaoleila.dto.response.ServicoResponse;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 
@@ -40,23 +43,12 @@ public class AgendamentoService {
     @Transactional
     public AgendamentoResponse criar(AgendamentoRequest request) {
 
-        validarDataEHorario(request);
+        validarDataEHorario(
+                request.data(),
+                request.horario()
+        );
 
         validarServicosDuplicados(request.servicoIds());
-
-        boolean horarioOcupado =
-                agendamentoRepository.existsByDataAndHorarioAndStatusNot(
-                        request.data(),
-                        request.horario(),
-                        StatusAgendamento.CANCELADO
-                );
-
-        if (horarioOcupado) {
-            throw new ResponseStatusException(
-                    HttpStatus.CONFLICT,
-                    "Já existe um agendamento para esta data e horário."
-            );
-        }
 
         Cliente cliente = clienteRepository
                 .findById(request.clienteId())
@@ -67,6 +59,16 @@ public class AgendamentoService {
                         )
                 );
 
+        List<Servico> servicos =
+                buscarServicos(request.servicoIds());
+
+        validarDisponibilidade(
+                request.data(),
+                request.horario(),
+                servicos,
+                null
+        );
+
         Agendamento agendamento = new Agendamento(
                 request.data(),
                 request.horario(),
@@ -74,19 +76,7 @@ public class AgendamentoService {
                 cliente
         );
 
-        for (Long servicoId : request.servicoIds()) {
-
-            Servico servico = servicoRepository
-                    .findById(servicoId)
-                    .orElseThrow(() ->
-                            new ResponseStatusException(
-                                    HttpStatus.NOT_FOUND,
-                                    "Serviço não encontrado: " + servicoId
-                            )
-                    );
-
-            agendamento.adicionarServico(servico);
-        }
+        servicos.forEach(agendamento::adicionarServico);
 
         Agendamento agendamentoSalvo =
                 agendamentoRepository.save(agendamento);
@@ -104,33 +94,228 @@ public class AgendamentoService {
                 .toList();
     }
 
-    private void validarDataEHorario(AgendamentoRequest request) {
+    @Transactional(readOnly = true)
+    public AgendamentoResponse buscarPorId(Long id) {
+
+        Agendamento agendamento =
+                buscarAgendamentoPorId(id);
+
+        return toResponse(agendamento);
+    }
+
+    @Transactional
+    public AgendamentoResponse atualizar(
+            Long id,
+            AgendamentoUpdateRequest request) {
+
+        Agendamento agendamento =
+                buscarAgendamentoPorId(id);
+
+        validarPrazoAlteracao(agendamento);
+
+        validarDataEHorario(
+                request.data(),
+                request.horario()
+        );
+
+        validarServicosDuplicados(request.servicoIds());
+
+        List<Servico> servicos =
+                buscarServicos(request.servicoIds());
+
+        validarDisponibilidade(
+                request.data(),
+                request.horario(),
+                servicos,
+                agendamento.getId()
+        );
+
+        agendamento.setData(request.data());
+        agendamento.setHorario(request.horario());
+
+        agendamento.removerServicos();
+
+        agendamentoRepository.flush();
+
+        servicos.forEach(agendamento::adicionarServico);
+
+        return toResponse(agendamento);
+    }
+
+    private Agendamento buscarAgendamentoPorId(Long id) {
+
+        return agendamentoRepository
+                .findById(id)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Agendamento não encontrado."
+                        )
+                );
+    }
+
+    private List<Servico> buscarServicos(
+            List<Long> servicoIds) {
+
+        return servicoIds
+                .stream()
+                .map(servicoId ->
+                        servicoRepository
+                                .findById(servicoId)
+                                .orElseThrow(() ->
+                                        new ResponseStatusException(
+                                                HttpStatus.NOT_FOUND,
+                                                "Serviço não encontrado: "
+                                                        + servicoId
+                                        )
+                                )
+                )
+                .toList();
+    }
+
+    private void validarPrazoAlteracao(
+            Agendamento agendamento) {
+
+        LocalDate dataLimite =
+                LocalDate.now().plusDays(2);
+
+        if (agendamento.getData().isBefore(dataLimite)) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Agendamentos com menos de 2 dias de antecedência "
+                            + "só podem ser alterados por telefone."
+            );
+        }
+    }
+
+    private void validarDataEHorario(
+            LocalDate data,
+            LocalTime horario) {
 
         LocalDateTime dataHoraAgendamento =
-                LocalDateTime.of(
-                        request.data(),
-                        request.horario()
+                LocalDateTime.of(data, horario);
+
+        if (dataHoraAgendamento
+                .isBefore(LocalDateTime.now())) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Data e horário do agendamento "
+                            + "não podem estar no passado."
+            );
+        }
+    }
+
+    private void validarServicosDuplicados(
+            List<Long> servicoIds) {
+
+        if (new HashSet<>(servicoIds).size()
+                != servicoIds.size()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Um mesmo serviço não pode ser "
+                            + "informado mais de uma vez."
+            );
+        }
+    }
+
+    private void validarDisponibilidade(
+            LocalDate data,
+            LocalTime horario,
+            List<Servico> novosServicos,
+            Long agendamentoIdIgnorado) {
+
+        int duracaoNovoAgendamento =
+                calcularDuracaoServicos(novosServicos);
+
+        LocalDateTime inicioNovo =
+                LocalDateTime.of(data, horario);
+
+        LocalDateTime fimNovo =
+                inicioNovo.plusMinutes(
+                        duracaoNovoAgendamento
                 );
 
-        if (dataHoraAgendamento.isBefore(LocalDateTime.now())) {
+        List<Agendamento> agendamentosDoDia =
+                agendamentoRepository
+                        .findByDataAndStatusNot(
+                                data,
+                                StatusAgendamento.CANCELADO
+                        );
+
+        boolean possuiConflito =
+                agendamentosDoDia
+                        .stream()
+                        .filter(agendamento ->
+                                agendamentoIdIgnorado == null
+                                        || !agendamento
+                                        .getId()
+                                        .equals(
+                                                agendamentoIdIgnorado
+                                        )
+                        )
+                        .anyMatch(agendamentoExistente ->
+                                possuiConflitoDeHorario(
+                                        inicioNovo,
+                                        fimNovo,
+                                        agendamentoExistente
+                                )
+                        );
+
+        if (possuiConflito) {
+
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Data e horário do agendamento não podem estar no passado."
+                    HttpStatus.CONFLICT,
+                    "O horário informado conflita "
+                            + "com outro agendamento."
             );
         }
     }
 
-    private void validarServicosDuplicados(List<Long> servicoIds) {
+    private boolean possuiConflitoDeHorario(
+            LocalDateTime inicioNovo,
+            LocalDateTime fimNovo,
+            Agendamento agendamentoExistente) {
 
-        if (new HashSet<>(servicoIds).size() != servicoIds.size()) {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST,
-                    "Um mesmo serviço não pode ser informado mais de uma vez."
-            );
-        }
+        LocalDateTime inicioExistente =
+                LocalDateTime.of(
+                        agendamentoExistente.getData(),
+                        agendamentoExistente.getHorario()
+                );
+
+        int duracaoExistente =
+                agendamentoExistente
+                        .getServicos()
+                        .stream()
+                        .mapToInt(item ->
+                                item
+                                        .getServico()
+                                        .getDuracao()
+                        )
+                        .sum();
+
+        LocalDateTime fimExistente =
+                inicioExistente.plusMinutes(
+                        duracaoExistente
+                );
+
+        return inicioNovo.isBefore(fimExistente)
+                && fimNovo.isAfter(inicioExistente);
     }
 
-    private AgendamentoResponse toResponse(Agendamento agendamento) {
+    private int calcularDuracaoServicos(
+            List<Servico> servicos) {
+
+        return servicos
+                .stream()
+                .mapToInt(Servico::getDuracao)
+                .sum();
+    }
+
+    private AgendamentoResponse toResponse(
+            Agendamento agendamento) {
 
         Cliente cliente = agendamento.getCliente();
 
@@ -143,11 +328,13 @@ public class AgendamentoService {
                 );
 
         List<ServicoResponse> servicosResponse =
-                agendamento.getServicos()
+                agendamento
+                        .getServicos()
                         .stream()
                         .map(item -> {
 
-                            Servico servico = item.getServico();
+                            Servico servico =
+                                    item.getServico();
 
                             return new ServicoResponse(
                                     servico.getId(),
