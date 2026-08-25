@@ -14,4 +14,11 @@ public interface AgendamentoRepository
             LocalDate data,
             StatusAgendamento status
     );
+
+    List<Agendamento>
+    findByCliente_IdAndDataBetweenOrderByDataDescHorarioDesc(
+            Long clienteId,
+            LocalDate dataInicio,
+            LocalDate dataFim
+    );
 }

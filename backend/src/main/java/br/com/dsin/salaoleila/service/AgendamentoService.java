@@ -355,4 +355,42 @@ public class AgendamentoService {
                 servicosResponse
         );
     }
+
+    @Transactional(readOnly = true)
+    public List<AgendamentoResponse> buscarHistorico(
+            Long clienteId,
+            LocalDate dataInicio,
+            LocalDate dataFim) {
+
+        validarPeriodo(dataInicio, dataFim);
+
+        if (!clienteRepository.existsById(clienteId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Cliente não encontrado."
+            );
+        }
+
+        return agendamentoRepository
+                .findByCliente_IdAndDataBetweenOrderByDataDescHorarioDesc(
+                        clienteId,
+                        dataInicio,
+                        dataFim
+                )
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
+
+    private void validarPeriodo(
+            LocalDate dataInicio,
+            LocalDate dataFim) {
+
+        if (dataInicio.isAfter(dataFim)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "A data inicial não pode ser posterior à data final."
+            );
+        }
+    }
 }
