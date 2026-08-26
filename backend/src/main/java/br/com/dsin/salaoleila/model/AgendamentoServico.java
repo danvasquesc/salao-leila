@@ -26,6 +26,10 @@ public class AgendamentoServico {
     @JoinColumn(name = "servico_id", nullable = false)
     private Servico servico;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private StatusServicoAgendamento status;
+
     public AgendamentoServico() {
     }
 
@@ -35,6 +39,7 @@ public class AgendamentoServico {
 
         this.agendamento = agendamento;
         this.servico = servico;
+        this.status = StatusServicoAgendamento.AGENDADO;
     }
 
     public Long getId() {
@@ -47,5 +52,13 @@ public class AgendamentoServico {
 
     public Servico getServico() {
         return servico;
+    }
+
+    public StatusServicoAgendamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusServicoAgendamento status) {
+        this.status = status;
     }
 }

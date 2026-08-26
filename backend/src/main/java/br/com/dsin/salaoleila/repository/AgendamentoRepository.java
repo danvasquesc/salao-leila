@@ -21,4 +21,8 @@ public interface AgendamentoRepository
             LocalDate dataInicio,
             LocalDate dataFim
     );
+
+    List<Agendamento> findByDataOrderByHorarioAsc(
+            LocalDate data
+    );
 }
