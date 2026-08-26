@@ -1,0 +1,123 @@
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    line-height: 1.5;
+}
+
+.container {
+    width: min(
+        var(--container-width),
+        calc(100% - 32px)
+    );
+    margin: 0 auto;
+}
+
+.header {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.header-content {
+    min-height: 72px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+}
+
+.brand {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.brand-subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}
+
+.navigation {
+    display: flex;
+    gap: 8px;
+}
+
+.navigation a {
+    padding: 8px 12px;
+    border-radius: var(--border-radius-sm);
+    color: var(--color-text-muted);
+}
+
+.navigation a:hover {
+    background-color: var(--color-surface-secondary);
+    color: var(--color-text);
+}
+
+.page {
+    padding: 32px 0 48px;
+}
+
+.page-header {
+    margin-bottom: 28px;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    margin-bottom: 4px;
+}
+
+.page-description {
+    color: var(--color-text-muted);
+}
+
+.button {
+    border: none;
+    border-radius: var(--border-radius-sm);
+
+    padding: 10px 16px;
+
+    font-weight: 600;
+
+    transition:
+        background-color 0.2s ease,
+        opacity 0.2s ease;
+}
+
+.button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.button-primary {
+    background-color: var(--color-primary);
+    color: #ffffff;
+}
+
+.button-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-dark);
+}
+
+.message {
+    padding: 16px;
+    border-radius: var(--border-radius-md);
+}
+
+.message-error {
+    background-color: var(--color-danger-background);
+    color: var(--color-danger);
+}
+
+.message-empty {
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+
+    border: 1px solid var(--color-border);
+
+    text-align: center;
+}

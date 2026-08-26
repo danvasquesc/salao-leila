@@ -1,10 +1,135 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Painel Operacional | Salão Leila</title>
+
+    <link
+            rel="stylesheet"
+            href="../css/reset.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="../css/variables.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="../css/global.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="../css/operacional.css"
+    >
 </head>
+
 <body>
 
+<header class="header">
+    <div class="container header-content">
+
+        <a href="../index.html" class="brand">
+            <span class="brand-title">
+                Cabeleleila Leila
+            </span>
+
+            <span class="brand-subtitle">
+                Sistema de Agendamentos
+            </span>
+        </a>
+
+        <nav class="navigation">
+            <a href="../index.html">
+                Início
+            </a>
+        </nav>
+
+    </div>
+</header>
+
+<main class="page">
+
+    <div class="container">
+
+        <section class="page-header">
+            <h1 class="page-title">
+                Painel Operacional
+            </h1>
+
+            <p class="page-description">
+                Acompanhe os agendamentos e serviços do salão.
+            </p>
+        </section>
+
+        <section class="agenda-filter">
+
+            <div class="filter-field">
+
+                <label for="dataAgenda">
+                    Data da agenda
+                </label>
+
+                <input
+                        type="date"
+                        id="dataAgenda"
+                        name="dataAgenda"
+                >
+
+            </div>
+
+            <button
+                    id="buscarAgenda"
+                    class="button button-primary"
+                    type="button"
+            >
+                Buscar agenda
+            </button>
+
+        </section>
+
+        <section class="agenda-summary">
+
+            <div>
+                <span class="summary-label">
+                    Agendamentos encontrados
+                </span>
+
+                <strong
+                        id="totalAgendamentos"
+                        class="summary-value"
+                >
+                    0
+                </strong>
+            </div>
+
+        </section>
+
+        <div
+                id="mensagem"
+                class="message-container"
+        ></div>
+
+        <section
+                id="listaAgendamentos"
+                class="appointments"
+        ></section>
+
+    </div>
+
+</main>
+
+<script src="../js/api.js"></script>
+<script src="../js/operacional.js"></script>
+
 </body>
+
 </html>
