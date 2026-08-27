@@ -2,6 +2,7 @@ package br.com.dsin.salaoleila.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 public record ClienteRequest(
@@ -11,7 +12,10 @@ public record ClienteRequest(
         String nome,
 
         @NotBlank(message = "Telefone é obrigatório")
-        @Size(max = 20, message = "Telefone deve ter no máximo 20 caracteres")
+        @Pattern(
+                regexp = "\\d{10,11}",
+                message = "Telefone deve conter 10 ou 11 números"
+        )
         String telefone,
 
         @Email(message = "E-mail inválido")

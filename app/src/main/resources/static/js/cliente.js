@@ -17,6 +17,18 @@ const confirmarAgendamentoButton =
 const clienteTelefoneInput =
     document.getElementById("clienteTelefone");
 
+const historicoDeInput =
+    document.getElementById("historicoDe");
+
+const historicoAteInput =
+    document.getElementById("historicoAte");
+
+const buscarHistoricoButton =
+    document.getElementById("buscarHistorico");
+
+const listaHistorico =
+    document.getElementById("listaHistorico");
+
 
 function formatarMoeda(valor) {
 
@@ -343,6 +355,209 @@ function limparDadosAgendamento() {
     ).value = "";
 }
 
+function textoStatus(status) {
+
+    const textos = {
+        AGENDADO: "Agendado",
+        CONFIRMADO: "Confirmado",
+        CONCLUIDO: "Concluído",
+        CANCELADO: "Cancelado"
+    };
+
+    return textos[status] || status;
+}
+
+function criarHistoricoHtml(agendamento) {
+
+    const servicos =
+        agendamento.servicos
+            .map(servico => servico.nome)
+            .join(", ");
+
+    return `
+        <article class="history-card">
+
+            <div class="history-card-header">
+
+                <div>
+                    <strong>
+                        ${formatarData(agendamento.data)}
+                    </strong>
+
+                    <span class="history-time">
+                        às ${agendamento.horario.substring(0, 5)}
+                    </span>
+                </div>
+
+                <span class="
+                    history-status
+                    history-status-${agendamento.status.toLowerCase()}
+                ">
+                    ${textoStatus(agendamento.status)}
+                </span>
+
+            </div>
+
+            <div class="history-services">
+                <strong>Serviços:</strong>
+                ${servicos}
+            </div>
+
+        </article>
+    `;
+}
+
+function renderizarHistorico(agendamentos) {
+
+    if (agendamentos.length === 0) {
+
+        listaHistorico.innerHTML = `
+            <div class="message message-empty">
+                Nenhum agendamento encontrado
+                no período informado.
+            </div>
+        `;
+
+        return;
+    }
+
+    listaHistorico.innerHTML =
+        agendamentos
+            .map(criarHistoricoHtml)
+            .join("");
+}
+
+function configurarPeriodoHistorico() {
+
+    const hoje = new Date();
+
+    const primeiroDia =
+        new Date(
+            hoje.getFullYear(),
+            hoje.getMonth(),
+            1
+        );
+
+    historicoDeInput.value =
+        formatarDataInput(primeiroDia);
+
+    historicoAteInput.value =
+        formatarDataInput(hoje);
+}
+
+function formatarDataInput(data) {
+
+    const ano = data.getFullYear();
+
+    const mes = String(
+        data.getMonth() + 1
+    ).padStart(2, "0");
+
+    const dia = String(
+        data.getDate()
+    ).padStart(2, "0");
+
+    return `${ano}-${mes}-${dia}`;
+}
+
+async function carregarHistorico() {
+
+    limparMensagemCliente();
+
+    const telefone =
+        normalizarTelefone(
+            document
+                .getElementById("clienteTelefone")
+                .value
+        );
+
+    if (
+        telefone.length !== 10
+        && telefone.length !== 11
+    ) {
+
+        exibirMensagemCliente(
+            "Informe um telefone válido "
+            + "para consultar o histórico."
+        );
+
+        return;
+    }
+
+    const dataInicio =
+        historicoDeInput.value;
+
+    const dataFim =
+        historicoAteInput.value;
+
+    if (!dataInicio || !dataFim) {
+
+        exibirMensagemCliente(
+            "Informe o período para consultar "
+            + "o histórico."
+        );
+
+        return;
+    }
+
+    if (dataInicio > dataFim) {
+
+        exibirMensagemCliente(
+            "A data inicial não pode ser "
+            + "posterior à data final."
+        );
+
+        return;
+    }
+
+    buscarHistoricoButton.disabled = true;
+
+    try {
+
+        const cliente =
+            await buscarClientePorTelefone(
+                telefone
+            );
+
+        if (!cliente) {
+
+            listaHistorico.innerHTML = "";
+
+            exibirMensagemCliente(
+                "Nenhum cliente encontrado "
+                + "com o telefone informado."
+            );
+
+            return;
+        }
+
+        const historico =
+            await apiRequest(
+                `/agendamentos/historico`
+                + `?clienteId=${cliente.id}`
+                + `&de=${dataInicio}`
+                + `&ate=${dataFim}`
+            );
+
+        renderizarHistorico(historico);
+
+    } catch (error) {
+
+        console.error(error);
+
+        listaHistorico.innerHTML = "";
+
+        exibirMensagemCliente(
+            "Não foi possível consultar "
+            + "o histórico."
+        );
+
+    } finally {
+
+        buscarHistoricoButton.disabled = false;
+    }
+}
+
 
 clienteTelefoneInput.addEventListener(
     "input",
@@ -441,4 +656,10 @@ formAgendamento.addEventListener(
     }
 );
 
+buscarHistoricoButton.addEventListener(
+    "click",
+    carregarHistorico
+);
+
+configurarPeriodoHistorico();
 carregarServicos();
