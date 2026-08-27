@@ -6,6 +6,7 @@ import br.com.dsin.salaoleila.model.Cliente;
 import br.com.dsin.salaoleila.repository.ClienteRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -97,5 +98,20 @@ public class ClienteService {
                 cliente.getTelefone(),
                 cliente.getEmail()
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ClienteResponse buscarPorTelefone(String telefone) {
+
+        Cliente cliente = clienteRepository
+                .findByTelefone(telefone)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "Cliente não encontrado."
+                        )
+                );
+
+        return toResponse(cliente);
     }
 }

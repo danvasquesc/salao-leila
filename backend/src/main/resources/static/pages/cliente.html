@@ -1,10 +1,350 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Área do Cliente | Salão Leila</title>
+
+    <link rel="stylesheet" href="../css/reset.css">
+    <link rel="stylesheet" href="../css/variables.css">
+    <link rel="stylesheet" href="../css/global.css">
+    <link rel="stylesheet" href="../css/cliente.css">
 </head>
+
 <body>
 
+<header class="header">
+
+    <div class="container header-content">
+
+        <a href="../index.html" class="brand">
+
+            <span class="brand-title">
+                Cabeleleila Leila
+            </span>
+
+            <span class="brand-subtitle">
+                Sistema de Agendamentos
+            </span>
+
+        </a>
+
+        <nav class="navigation">
+
+            <a href="../index.html">
+                Início
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="page">
+
+    <div class="container">
+
+        <section class="page-header">
+
+            <h1 class="page-title">
+                Área do Cliente
+            </h1>
+
+            <p class="page-description">
+                Escolha seus serviços e agende
+                seu horário de forma simples.
+            </p>
+
+        </section>
+
+
+        <div
+                id="mensagemCliente"
+                class="message-container"
+        ></div>
+
+
+        <form
+                id="formAgendamento"
+                class="booking-form"
+        >
+
+            <section class="form-section">
+
+                <div class="section-heading">
+
+                    <span class="section-number">
+                        1
+                    </span>
+
+                    <div>
+                        <h2>Seus dados</h2>
+
+                        <p>
+                            Informe seus dados
+                            para realizar o agendamento.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-field form-field-full">
+
+                        <label for="clienteNome">
+                            Nome completo
+                        </label>
+
+                        <input
+                                type="text"
+                                id="clienteNome"
+                                name="clienteNome"
+                                maxlength="100"
+                                required
+                        >
+
+                    </div>
+
+
+                    <div class="form-field">
+
+                        <label for="clienteTelefone">
+                            Telefone
+                        </label>
+
+                        <input
+                                type="tel"
+                                id="clienteTelefone"
+                                name="clienteTelefone"
+                                minlength="10"
+                                maxlength="11"
+                                pattern="[0-9]{10,11}"
+                                inputmode="numeric"
+                                title="Informe um telefone com 10 ou 11 números"
+                                required
+                        >
+
+                    </div>
+
+
+                    <div class="form-field">
+
+                        <label for="clienteEmail">
+                            E-mail
+                        </label>
+
+                        <input
+                                type="email"
+                                id="clienteEmail"
+                                name="clienteEmail"
+                                maxlength="100"
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <section class="form-section">
+
+                <div class="section-heading">
+
+                    <span class="section-number">
+                        2
+                    </span>
+
+                    <div>
+                        <h2>Escolha os serviços</h2>
+
+                        <p>
+                            Você pode selecionar
+                            um ou mais serviços.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div
+                        id="listaServicosCliente"
+                        class="services-selection"
+                >
+
+                    <p class="loading-text">
+                        Carregando serviços...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <section class="form-section">
+
+                <div class="section-heading">
+
+                    <span class="section-number">
+                        3
+                    </span>
+
+                    <div>
+                        <h2>Data e horário</h2>
+
+                        <p>
+                            Escolha quando deseja
+                            realizar o atendimento.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="form-grid">
+
+                    <div class="form-field">
+
+                        <label for="agendamentoData">
+                            Data
+                        </label>
+
+                        <input
+                                type="date"
+                                id="agendamentoData"
+                                name="agendamentoData"
+                                required
+                        >
+
+                    </div>
+
+
+                    <div class="form-field">
+
+                        <label for="agendamentoHorario">
+                            Horário
+                        </label>
+
+                        <input
+                                type="time"
+                                id="agendamentoHorario"
+                                name="agendamentoHorario"
+                                required
+                        >
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <div class="booking-actions">
+
+                <button
+                        id="confirmarAgendamento"
+                        class="button button-primary"
+                        type="submit"
+                >
+                    Confirmar agendamento
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <section
+                id="confirmacaoAgendamento"
+                class="booking-confirmation"
+                hidden
+        ></section>
+
+
+        <section class="history-section">
+
+            <div class="section-heading">
+
+                <div>
+                    <h2>
+                        Histórico de agendamentos
+                    </h2>
+
+                    <p>
+                        Consulte seus agendamentos
+                        em um período.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="history-filter">
+
+                <div class="form-field">
+
+                    <label for="historicoDe">
+                        De
+                    </label>
+
+                    <input
+                            type="date"
+                            id="historicoDe"
+                    >
+
+                </div>
+
+
+                <div class="form-field">
+
+                    <label for="historicoAte">
+                        Até
+                    </label>
+
+                    <input
+                            type="date"
+                            id="historicoAte"
+                    >
+
+                </div>
+
+
+                <button
+                        id="buscarHistorico"
+                        class="button button-primary"
+                        type="button"
+                >
+                    Buscar histórico
+                </button>
+
+            </div>
+
+
+            <div
+                    id="listaHistorico"
+                    class="history-list"
+            ></div>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<script src="../js/api.js"></script>
+<script src="../js/cliente.js"></script>
+
 </body>
+
 </html>

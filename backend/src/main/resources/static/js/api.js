@@ -11,9 +11,15 @@ async function apiRequest(url, options = {}) {
     const response = await fetch(url, config);
 
     if (!response.ok) {
-        throw new Error(
-            `Erro na requisição. Status: ${response.status}`
-        );
+
+        const error =
+            new Error(
+                `Erro na requisição. Status: ${response.status}`
+            );
+
+        error.status = response.status;
+
+        throw error;
     }
 
     if (response.status === 204) {

@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -59,5 +60,14 @@ public class ClienteController {
         clienteService.excluir(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<ClienteResponse> buscarPorTelefone(
+            @RequestParam String telefone) {
+
+        return ResponseEntity.ok(
+                clienteService.buscarPorTelefone(telefone)
+        );
     }
 }

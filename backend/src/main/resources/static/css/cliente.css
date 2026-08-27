@@ -1,0 +1,255 @@
+.booking-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 20px;
+}
+
+.form-section,
+.history-section {
+    background-color: var(--color-surface);
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-lg);
+
+    padding: 24px;
+
+    box-shadow: var(--shadow-sm);
+}
+
+.section-heading {
+    display: flex;
+    align-items: flex-start;
+
+    gap: 14px;
+
+    margin-bottom: 22px;
+}
+
+.section-heading h2 {
+    font-size: 1.15rem;
+
+    margin-bottom: 3px;
+}
+
+.section-heading p {
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+}
+
+.section-number {
+    min-width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    background-color: var(--color-primary-light);
+    color: var(--color-primary-dark);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+}
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 16px;
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.form-field-full {
+    grid-column: 1 / -1;
+}
+
+.form-field label {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.form-field input {
+    width: 100%;
+    height: 42px;
+
+    padding: 0 12px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+.form-field input:focus {
+    outline: 2px solid var(--color-primary-light);
+    border-color: var(--color-primary);
+}
+
+.services-selection {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+.service-option {
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+
+    padding: 16px;
+
+    display: flex;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.service-option:hover {
+    border-color: var(--color-primary);
+}
+
+.service-option:has(input:checked) {
+    border-color: var(--color-primary);
+    background-color: var(--color-primary-light);
+}
+
+.service-option input {
+    margin-top: 4px;
+}
+
+.service-option-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.service-option-name {
+    font-weight: 700;
+}
+
+.service-option-description {
+    color: var(--color-text-muted);
+
+    font-size: 0.85rem;
+
+    margin-top: 2px;
+}
+
+.service-option-details {
+    color: var(--color-primary-dark);
+
+    font-size: 0.85rem;
+    font-weight: 600;
+
+    margin-top: 8px;
+}
+
+.loading-text {
+    color: var(--color-text-muted);
+}
+
+.booking-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.booking-actions .button {
+    min-width: 220px;
+}
+
+.booking-confirmation {
+    margin-top: 20px;
+
+    padding: 22px;
+
+    background-color: var(--color-success-background);
+    color: var(--color-success);
+
+    border: 1px solid var(--color-success);
+    border-radius: var(--border-radius-lg);
+}
+
+.booking-confirmation h2 {
+    margin-bottom: 6px;
+}
+
+.history-section {
+    margin-top: 32px;
+}
+
+.history-filter {
+    display: flex;
+    align-items: end;
+
+    gap: 14px;
+
+    padding-bottom: 20px;
+
+    border-bottom: 1px solid var(--color-border);
+}
+
+.history-filter .form-field {
+    flex: 1;
+    max-width: 220px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 12px;
+
+    margin-top: 20px;
+}
+
+.history-card {
+    padding: 16px;
+
+    background-color:
+        var(--color-surface-secondary);
+
+    border-radius: var(--border-radius-md);
+}
+
+@media (max-width: 700px) {
+
+    .form-grid,
+    .services-selection {
+        grid-template-columns: 1fr;
+    }
+
+    .form-field-full {
+        grid-column: auto;
+    }
+
+    .history-filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .history-filter .form-field {
+        max-width: none;
+    }
+
+    .booking-actions .button {
+        width: 100%;
+    }
+}
