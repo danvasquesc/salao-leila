@@ -4,6 +4,17 @@ Sistema de agendamento desenvolvido para o teste técnico da DSIN, com foco no a
 
 A aplicação permite o cadastro e consulta de clientes e serviços, criação de agendamentos com um ou mais serviços, consulta de histórico e operações administrativas para gerenciamento da agenda.
 
+## Evidências
+
+Os prints da aplicação são organizados em:
+
+[Prints](docs/evidencias/prints/)
+
+O vídeo de demonstração é referenciado em:
+
+[README do Vídeo](docs/evidencias/video/README.md)
+[Assistir ao vídeo de demonstração](https://drive.google.com/file/d/1hW8tDxwKj6asrLO7SnzDtHi6zFe-9Gkf/view?usp=sharing)
+
 ## Funcionalidades
 
 ### Área do cliente
@@ -231,16 +242,6 @@ A validação da entrega foi planejada com:
 Os cenários estão documentados em:
 
 [Testes realizados e cenários](docs/testes.md)
-
-## Evidências
-
-Os prints da aplicação são organizados em:
-
-[Prints](docs/evidencias/prints/)
-
-O vídeo de demonstração é referenciado em:
-
-[Vídeo](docs/evidencias/video/README.md)
 
 ## Documentação técnica
 
