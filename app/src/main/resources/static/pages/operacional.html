@@ -48,9 +48,25 @@
         </a>
 
         <nav class="navigation">
+
             <a href="../index.html">
                 Início
             </a>
+
+            <form
+                    action="/logout"
+                    method="post"
+            >
+
+                <button
+                        type="submit"
+                        class="nav-button"
+                >
+                    Sair
+                </button>
+
+            </form>
+
         </nav>
 
     </div>
@@ -126,6 +142,119 @@
     </div>
 
 </main>
+
+<dialog
+        id="modalEditarAgendamento"
+        class="edit-dialog"
+>
+
+    <div class="edit-dialog-content">
+
+        <div class="edit-dialog-header">
+
+            <div>
+                <span class="edit-dialog-label">
+                    Alteração operacional
+                </span>
+
+                <h2>
+                    Alterar agendamento
+                </h2>
+            </div>
+
+            <button
+                    id="fecharEdicao"
+                    type="button"
+                    class="dialog-close"
+                    aria-label="Fechar"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <p class="edit-dialog-description">
+            Utilize esta opção para registrar alterações
+            solicitadas diretamente ao salão.
+        </p>
+
+        <div
+                id="mensagemEdicao"
+                class="message-container"
+        ></div>
+
+        <form id="formEditarAgendamento">
+
+            <div class="edit-grid">
+
+                <div class="edit-field">
+
+                    <label for="editarData">
+                        Data
+                    </label>
+
+                    <input
+                            type="date"
+                            id="editarData"
+                            required
+                    >
+
+                </div>
+
+                <div class="edit-field">
+
+                    <label for="editarHorario">
+                        Horário
+                    </label>
+
+                    <input
+                            type="time"
+                            id="editarHorario"
+                            required
+                    >
+
+                </div>
+
+            </div>
+
+            <fieldset class="edit-services">
+
+                <legend>
+                    Serviços
+                </legend>
+
+                <div
+                        id="editarServicos"
+                        class="edit-services-list"
+                ></div>
+
+            </fieldset>
+
+            <div class="edit-actions">
+
+                <button
+                        id="cancelarEdicao"
+                        type="button"
+                        class="button"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                        id="salvarEdicao"
+                        type="submit"
+                        class="button button-primary"
+                >
+                    Salvar alteração
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</dialog>
 
 <script src="../js/api.js"></script>
 <script src="../js/operacional.js"></script>

@@ -1,7 +1,9 @@
 package br.com.dsin.salaoleila.controller;
 
+import br.com.dsin.salaoleila.dto.request.AgendamentoUpdateRequest;
 import br.com.dsin.salaoleila.dto.request.AtualizarStatusAgendamentoRequest;
 import br.com.dsin.salaoleila.dto.request.AtualizarStatusServicoRequest;
+import br.com.dsin.salaoleila.dto.response.AgendamentoResponse;
 import br.com.dsin.salaoleila.dto.response.OperacionalAgendamentoResponse;
 import br.com.dsin.salaoleila.service.OperacionalService;
 import jakarta.validation.Valid;
@@ -34,6 +36,17 @@ public class OperacionalController {
 
         return ResponseEntity.ok(
                 operacionalService.listarPorData(data)
+        );
+    }
+
+    @PutMapping("/agendamentos/{id}")
+    public AgendamentoResponse alterarAgendamento(
+            @PathVariable Long id,
+            @Valid @RequestBody AgendamentoUpdateRequest request) {
+
+        return operacionalService.alterarAgendamento(
+                id,
+                request
         );
     }
 

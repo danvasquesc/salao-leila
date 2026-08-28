@@ -59,6 +59,27 @@ body {
     color: var(--color-text);
 }
 
+.nav-button {
+    border: none;
+    background: none;
+
+    padding: 8px 12px;
+
+    border-radius:
+        var(--border-radius-sm);
+
+    color: var(--color-text-muted);
+
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color:
+        var(--color-surface-secondary);
+
+    color: var(--color-text);
+}
+
 .page {
     padding: 32px 0 48px;
 }
@@ -111,6 +132,11 @@ body {
 .message-error {
     background-color: var(--color-danger-background);
     color: var(--color-danger);
+}
+
+.message-success {
+    background-color: var(--color-success-background);
+    color: var(--color-success);
 }
 
 .message-empty {

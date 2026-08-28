@@ -142,6 +142,54 @@ public class AgendamentoService {
         return toResponse(agendamento);
     }
 
+    @Transactional
+    public AgendamentoResponse atualizarOperacional(
+            Long id,
+            AgendamentoUpdateRequest request) {
+
+        Agendamento agendamento =
+                buscarAgendamentoPorId(id);
+
+        validarDataEHorario(
+                request.data(),
+                request.horario()
+        );
+
+        validarServicosDuplicados(
+                request.servicoIds()
+        );
+
+        List<Servico> servicos =
+                buscarServicos(
+                        request.servicoIds()
+                );
+
+        validarDisponibilidade(
+                request.data(),
+                request.horario(),
+                servicos,
+                agendamento.getId()
+        );
+
+        agendamento.setData(
+                request.data()
+        );
+
+        agendamento.setHorario(
+                request.horario()
+        );
+
+        agendamento.removerServicos();
+
+        agendamentoRepository.flush();
+
+        servicos.forEach(
+                agendamento::adicionarServico
+        );
+
+        return toResponse(agendamento);
+    }
+
     private Agendamento buscarAgendamentoPorId(Long id) {
 
         return agendamentoRepository

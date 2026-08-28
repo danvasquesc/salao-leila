@@ -216,6 +216,169 @@
     color: var(--color-danger);
 }
 
+.appointment-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    padding-top: 18px;
+}
+
+.edit-appointment-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+.edit-dialog {
+    width: min(92%, 600px);
+
+    border: none;
+    border-radius: var(--border-radius-lg);
+
+    padding: 0;
+
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+.edit-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.45);
+}
+
+.edit-dialog-content {
+    padding: 26px;
+}
+
+.edit-dialog-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+.edit-dialog-label {
+    color: var(--color-primary);
+
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.edit-dialog-header h2 {
+    margin-top: 4px;
+}
+
+.edit-dialog-description {
+    color: var(--color-text-muted);
+
+    margin-top: 8px;
+    margin-bottom: 20px;
+}
+
+.dialog-close {
+    border: none;
+    background: none;
+
+    font-size: 1.7rem;
+
+    color: var(--color-text-muted);
+
+    cursor: pointer;
+}
+
+.edit-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+}
+
+.edit-field {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+.edit-field label,
+.edit-services legend {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.edit-field input {
+    height: 42px;
+
+    padding: 0 10px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-sm);
+
+    background-color: var(--color-surface);
+    color: var(--color-text);
+}
+
+.edit-services {
+    border: none;
+    padding: 0;
+}
+
+.edit-services-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.edit-service-option {
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 12px;
+
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius-md);
+
+    cursor: pointer;
+}
+
+.edit-service-option input {
+    width: 18px;
+    height: 18px;
+}
+
+.edit-service-option span {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-service-option small {
+    color: var(--color-text-muted);
+
+    margin-top: 2px;
+}
+
+.edit-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 24px;
+}
+
+
+
+
+
 @media (max-width: 700px) {
 
     .agenda-filter {
@@ -242,5 +405,25 @@
     .service-item {
         flex-direction: column;
         align-items: stretch;
+    }
+
+    .edit-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .edit-actions {
+        flex-direction: column-reverse;
+    }
+
+    .edit-actions .button {
+        width: 100%;
+    }
+
+    .appointment-actions {
+        justify-content: stretch;
+    }
+
+    .edit-appointment-button {
+        width: 100%;
     }
 }

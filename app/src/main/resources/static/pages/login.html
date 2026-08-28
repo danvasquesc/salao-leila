@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Acesso Operacional | Salão Leila
+    </title>
+
+    <link
+            rel="stylesheet"
+            href="../css/reset.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="../css/variables.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="../css/global.css"
+    >
+
+    <link
+            rel="stylesheet"
+            href="../css/login.css"
+    >
+
+</head>
+
+<body>
+
+<header class="header">
+
+    <div class="container header-content">
+
+        <a
+                href="../index.html"
+                class="brand"
+        >
+
+            <span class="brand-title">
+                Cabeleleila Leila
+            </span>
+
+            <span class="brand-subtitle">
+                Sistema de Agendamentos
+            </span>
+
+        </a>
+
+        <nav class="navigation">
+
+            <a href="../index.html">
+                Início
+            </a>
+
+        </nav>
+
+    </div>
+
+</header>
+
+
+<main class="login-page">
+
+    <section class="login-card">
+
+        <div class="login-header">
+
+            <span class="login-label">
+                Área restrita
+            </span>
+
+            <h1>
+                Painel Operacional
+            </h1>
+
+            <p>
+                Informe suas credenciais para
+                acessar a agenda do salão.
+            </p>
+
+        </div>
+
+
+        <div
+                id="mensagemLogin"
+                class="message-container"
+        ></div>
+
+
+        <form
+                action="/login"
+                method="post"
+                class="login-form"
+        >
+
+            <div class="login-field">
+
+                <label for="username">
+                    Usuário
+                </label>
+
+                <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        autocomplete="username"
+                        required
+                >
+
+            </div>
+
+
+            <div class="login-field">
+
+                <label for="password">
+                    Senha
+                </label>
+
+                <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        autocomplete="current-password"
+                        required
+                >
+
+            </div>
+
+
+            <button
+                    type="submit"
+                    class="button button-primary login-button"
+            >
+                Entrar
+            </button>
+
+        </form>
+
+
+        <button
+                id="esqueciSenha"
+                type="button"
+                class="forgot-password"
+        >
+            Esqueci minha senha
+        </button>
+
+
+        <section
+                id="recuperacaoSenha"
+                class="recovery-panel"
+                hidden
+        >
+
+            <h2>
+                Recuperar acesso
+            </h2>
+
+            <p>
+                Informe o telefone cadastrado
+                para receber instruções de
+                recuperação.
+            </p>
+
+            <form id="formRecuperacao">
+
+                <div class="login-field">
+
+                    <label for="telefoneRecuperacao">
+                        Telefone
+                    </label>
+
+                    <input
+                            type="tel"
+                            id="telefoneRecuperacao"
+                            maxlength="11"
+                            inputmode="numeric"
+                            required
+                    >
+
+                </div>
+
+                <button
+                        class="button button-primary"
+                        type="submit"
+                >
+                    Enviar instruções
+                </button>
+
+            </form>
+
+            <div
+                    id="mensagemRecuperacao"
+                    class="recovery-message"
+            ></div>
+
+        </section>
+
+
+        <div class="login-demo">
+
+            <strong>
+                Acesso de demonstração
+            </strong>
+
+            <span>
+                Usuário: salao.leila
+            </span>
+
+            <span>
+                Senha: SalaoLeila@0
+            </span>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="../js/login.js"></script>
+
+</body>
+
+</html>

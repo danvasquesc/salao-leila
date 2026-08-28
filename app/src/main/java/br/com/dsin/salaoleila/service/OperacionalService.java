@@ -2,6 +2,8 @@ package br.com.dsin.salaoleila.service;
 
 import br.com.dsin.salaoleila.dto.response.OperacionalAgendamentoResponse;
 import br.com.dsin.salaoleila.dto.response.OperacionalServicoResponse;
+import br.com.dsin.salaoleila.dto.request.AgendamentoUpdateRequest;
+import br.com.dsin.salaoleila.dto.response.AgendamentoResponse;
 import br.com.dsin.salaoleila.model.Agendamento;
 import br.com.dsin.salaoleila.model.AgendamentoServico;
 import br.com.dsin.salaoleila.model.StatusAgendamento;
@@ -19,11 +21,14 @@ import java.util.List;
 public class OperacionalService {
 
     private final AgendamentoRepository agendamentoRepository;
+    private final AgendamentoService agendamentoService;
 
     public OperacionalService(
-            AgendamentoRepository agendamentoRepository) {
+            AgendamentoRepository agendamentoRepository,
+            AgendamentoService agendamentoService) {
 
         this.agendamentoRepository = agendamentoRepository;
+        this.agendamentoService = agendamentoService;
     }
 
     @Transactional(readOnly = true)
@@ -38,6 +43,17 @@ public class OperacionalService {
                 .stream()
                 .map(this::toResponse)
                 .toList();
+    }
+
+    @Transactional
+    public AgendamentoResponse alterarAgendamento(
+            Long id,
+            AgendamentoUpdateRequest request) {
+
+        return agendamentoService.atualizarOperacional(
+                id,
+                request
+        );
     }
 
     @Transactional

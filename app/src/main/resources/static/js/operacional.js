@@ -13,6 +13,58 @@ const totalAgendamentos =
 const mensagem =
     document.getElementById("mensagem");
 
+const modalEditarAgendamento =
+    document.getElementById(
+        "modalEditarAgendamento"
+    );
+
+const formEditarAgendamento =
+    document.getElementById(
+        "formEditarAgendamento"
+    );
+
+const editarDataInput =
+    document.getElementById(
+        "editarData"
+    );
+
+const editarHorarioInput =
+    document.getElementById(
+        "editarHorario"
+    );
+
+const editarServicos =
+    document.getElementById(
+        "editarServicos"
+    );
+
+const mensagemEdicao =
+    document.getElementById(
+        "mensagemEdicao"
+    );
+
+const cancelarEdicaoButton =
+    document.getElementById(
+        "cancelarEdicao"
+    );
+
+const fecharEdicaoButton =
+    document.getElementById(
+        "fecharEdicao"
+    );
+
+const salvarEdicaoButton =
+    document.getElementById(
+        "salvarEdicao"
+    );
+
+
+let agendamentosCarregados = [];
+
+let servicosDisponiveis = [];
+
+let agendamentoEmEdicaoId = null;
+
 
 function obterDataAtual() {
 
@@ -281,6 +333,23 @@ function criarAgendamentoHtml(agendamento) {
 
             </div>
 
+            <div class="appointment-actions">
+
+                <button
+                    type="button"
+                    class="button edit-appointment-button"
+
+                    data-agendamento-id="${agendamento.id}"
+
+                    ${agendamentoCancelado
+                        ? "disabled"
+                        : ""}
+                >
+                    Alterar agendamento
+                </button>
+
+            </div>
+
         </article>
     `;
 }
@@ -306,6 +375,9 @@ function limparMensagem() {
 
 function renderizarAgendamentos(agendamentos) {
 
+    agendamentosCarregados =
+        agendamentos;
+
     totalAgendamentos.textContent =
         agendamentos.length;
 
@@ -327,6 +399,7 @@ function renderizarAgendamentos(agendamentos) {
             .join("");
 
     adicionarEventosStatus();
+    adicionarEventosEdicao();
 }
 
 
@@ -400,6 +473,262 @@ async function alterarStatusAgendamento(
     }
 }
 
+async function carregarServicosDisponiveis() {
+
+    if (servicosDisponiveis.length > 0) {
+        return;
+    }
+
+    servicosDisponiveis =
+        await apiRequest(
+            "/servicos"
+        );
+}
+
+function renderizarServicosEdicao(
+    agendamento
+) {
+
+    const servicosAtuais =
+        agendamento.servicos
+            .map(servico =>
+                servico.servicoId
+            );
+
+    editarServicos.innerHTML =
+        servicosDisponiveis
+            .map(servico => {
+
+                const selecionado =
+                    servicosAtuais.includes(
+                        servico.id
+                    );
+
+                return `
+                    <label class="edit-service-option">
+
+                        <input
+                            type="checkbox"
+                            name="servicoEdicao"
+                            value="${servico.id}"
+
+                            ${selecionado
+                                ? "checked"
+                                : ""}
+                        >
+
+                        <span>
+
+                            <strong>
+                                ${servico.nome}
+                            </strong>
+
+                            <small>
+                                ${servico.duracao} minutos
+                            </small>
+
+                        </span>
+
+                    </label>
+                `;
+            })
+            .join("");
+}
+
+async function abrirEdicao(
+    agendamentoId
+) {
+
+    limparMensagem();
+
+    const agendamento =
+        agendamentosCarregados
+            .find(item =>
+                item.id === Number(
+                    agendamentoId
+                )
+            );
+
+    if (!agendamento) {
+
+        exibirMensagem(
+            "Agendamento não encontrado."
+        );
+
+        return;
+    }
+
+    try {
+
+        await carregarServicosDisponiveis();
+
+        agendamentoEmEdicaoId =
+            agendamento.id;
+
+        editarDataInput.value =
+            agendamento.data;
+
+        editarHorarioInput.value =
+            formatarHorario(
+                agendamento.horario
+            );
+
+        mensagemEdicao.innerHTML = "";
+
+        renderizarServicosEdicao(
+            agendamento
+        );
+
+        modalEditarAgendamento
+            .showModal();
+
+    } catch (error) {
+
+        console.error(error);
+
+        exibirMensagem(
+            "Não foi possível carregar "
+            + "os dados para alteração."
+        );
+    }
+}
+
+function obterServicosEdicao() {
+
+    return Array
+        .from(
+            document.querySelectorAll(
+                'input[name="servicoEdicao"]:checked'
+            )
+        )
+        .map(input =>
+            Number(input.value)
+        );
+}
+
+function exibirMensagemEdicao(
+    texto,
+    tipo = "error"
+) {
+
+    mensagemEdicao.innerHTML = `
+        <div class="message message-${tipo}">
+            ${texto}
+        </div>
+    `;
+}
+
+async function salvarAlteracaoAgendamento(
+    event
+) {
+
+    event.preventDefault();
+
+    const data =
+        editarDataInput.value;
+
+    const horario =
+        editarHorarioInput.value;
+
+    const servicoIds =
+        obterServicosEdicao();
+
+    mensagemEdicao.innerHTML = "";
+
+    if (servicoIds.length === 0) {
+
+        exibirMensagemEdicao(
+            "Selecione pelo menos um serviço."
+        );
+
+        return;
+    }
+
+    salvarEdicaoButton.disabled = true;
+
+    try {
+
+        await apiRequest(
+            `/operacional/agendamentos/${agendamentoEmEdicaoId}`,
+            {
+                method: "PUT",
+
+                body: JSON.stringify({
+                    data,
+                    horario,
+                    servicoIds
+                })
+            }
+        );
+
+        modalEditarAgendamento.close();
+
+        agendamentoEmEdicaoId = null;
+
+        await carregarAgendamentos();
+
+        exibirMensagem(
+            "Agendamento alterado com sucesso.",
+            "success"
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+        if (error.status === 409) {
+
+            exibirMensagemEdicao(
+                "O horário informado conflita "
+                + "com outro agendamento."
+            );
+
+            return;
+        }
+
+        if (error.status === 400) {
+
+            exibirMensagemEdicao(
+                "Verifique a data, o horário "
+                + "e os serviços informados."
+            );
+
+            return;
+        }
+
+        exibirMensagemEdicao(
+            "Não foi possível alterar "
+            + "o agendamento."
+        );
+
+    } finally {
+
+        salvarEdicaoButton.disabled = false;
+    }
+}
+
+function adicionarEventosEdicao() {
+
+    const botoes =
+        document.querySelectorAll(
+            ".edit-appointment-button"
+        );
+
+    botoes.forEach(botao => {
+
+        botao.addEventListener(
+            "click",
+            event => {
+
+                abrirEdicao(
+                    event.currentTarget
+                        .dataset
+                        .agendamentoId
+                );
+            }
+        );
+    });
+}
 
 async function alterarStatusServico(
     agendamentoId,
@@ -509,6 +838,32 @@ dataAgendaInput.addEventListener(
     carregarAgendamentos
 );
 
+cancelarEdicaoButton.addEventListener(
+    "click",
+    () => {
+
+        modalEditarAgendamento.close();
+
+        agendamentoEmEdicaoId = null;
+    }
+);
+
+
+fecharEdicaoButton.addEventListener(
+    "click",
+    () => {
+
+        modalEditarAgendamento.close();
+
+        agendamentoEmEdicaoId = null;
+    }
+);
+
+
+formEditarAgendamento.addEventListener(
+    "submit",
+    salvarAlteracaoAgendamento
+);
 
 dataAgendaInput.value =
     obterDataAtual();
