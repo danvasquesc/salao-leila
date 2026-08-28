@@ -94,3 +94,26 @@ ORDER BY data, horario;
 SELECT *
 FROM agendamento_servicos
 ORDER BY agendamento_id, id;
+
+SELECT
+    a.id AS agendamento_id,
+    a.data,
+    a.horario,
+    c.nome AS cliente,
+    c.telefone,
+    s.nome AS servico,
+    s.duracao AS duracao_minutos,
+    a.status AS status_agendamento,
+    ags.status AS status_servico
+FROM agendamentos a
+         INNER JOIN clientes c
+                    ON c.id = a.cliente_id
+         INNER JOIN agendamento_servicos ags
+                    ON ags.agendamento_id = a.id
+         INNER JOIN servicos s
+                    ON s.id = ags.servico_id
+ORDER BY
+    a.data ASC,
+    a.horario ASC,
+    a.id ASC,
+    ags.id ASC;
