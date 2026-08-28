@@ -1,208 +1,140 @@
-# Testes e Evidências
+# Testes
 
-## Estratégia de testes
+## Estratégia
 
-Durante o desenvolvimento, a aplicação foi validada por meio de:
+A entrega utiliza principalmente testes manuais de integração por Postman, navegador e MySQL Workbench.
 
-- testes manuais da API utilizando Postman;
-- testes da integração frontend/API pelo navegador;
-- consultas diretas ao MySQL utilizando MySQL Workbench.
+A issue dedicada de testes unitários ficou fora do escopo final devido à priorização das funcionalidades principais dentro do prazo disponível.
 
-Os testes unitários automatizados não fazem parte do escopo final desta entrega. A prioridade foi validar os principais fluxos e regras de negócio da aplicação dentro do prazo disponível.
+## Principais cenários
 
+### Cliente válido
 
-# Testes principais da API
-
-Os testes abaixo foram selecionados como principais evidências do funcionamento da API.
-
-
-## 1. Listagem de serviços
-
-**Método**
-
-`GET`
-
-**Endpoint**
-
-`/servicos`
-
-**Resultado esperado**
-
-`200 OK`
-
-A resposta deve apresentar os serviços cadastrados, incluindo nome, descrição, preço e duração.
-
-
-## 2. Criação de agendamento com múltiplos serviços
-
-**Método**
-
-`POST`
-
-**Endpoint**
-
-`/agendamentos`
-
-**Body**
-
-```json
-{
-  "data": "DATA_FUTURA",
-  "horario": "14:00",
-  "clienteId": 4,
-  "servicoIds": [4, 6]
-}
+```http
+POST /clientes
 ```
 
-**Resultado esperado**
+Esperado: `201 Created`.
 
-`201 Created`
+### Telefone inválido
 
-A resposta deve apresentar:
+Esperado: `400 Bad Request`.
 
-- cliente;
-- data;
-- horário;
-- status AGENDADO;
-- os dois serviços selecionados.
+### Serviços
 
-
-## 3. Alteração de agendamento
-
-**Método**
-
-`PUT`
-
-**Endpoint**
-
-`/agendamentos/{id}`
-
-**Body**
-
-```json
-{
-  "data": "DATA_FUTURA",
-  "horario": "15:00",
-  "servicoIds": [4]
-}
+```http
+GET /servicos
 ```
 
-**Resultado esperado**
+Esperado: `200 OK`.
 
-`200 OK`
+### Criar agendamento com múltiplos serviços
 
-O agendamento deve ser atualizado respeitando as regras de prazo e disponibilidade.
+```http
+POST /agendamentos
+```
 
+Esperado: `201 Created`.
 
-## 4. Regra de conflito de horário
+### Conflito de horário
 
-**Método**
+Esperado: `409 Conflict`.
 
-`POST` ou `PUT`
+### Regra dos 2 dias
 
-**Endpoint**
+```http
+PUT /agendamentos/{id}
+```
 
-`/agendamentos`
+Para agendamento dentro do limite: `400 Bad Request`.
 
-**Resultado esperado**
+### Histórico
 
-`409 Conflict`
+```http
+GET /agendamentos/historico?clienteId={id}&de=DATA_INICIAL&ate=DATA_FINAL
+```
 
-O sistema deve impedir a criação ou alteração quando o horário solicitado conflitar com outro atendimento.
+Esperado: `200 OK`.
 
+### Login operacional
 
-## 5. Regra de alteração com menos de dois dias
+Acesso direto a `/pages/operacional.html` sem sessão deve redirecionar para login.
 
-Método
+Credenciais:
 
-PUT
+```text
+salao.leila
+SalaoLeila@0
+```
 
-Endpoint
+### Agenda operacional
 
-/agendamentos/{id}
+```http
+GET /operacional/agendamentos?data=DATA
+```
 
-Resultado esperado
+Esperado: `200 OK`.
 
-400 Bad Request
+### Alteração operacional
 
-O sistema deve impedir que o cliente altere pelo sistema um agendamento com menos de dois dias de antecedência.
+```http
+PUT /operacional/agendamentos/{id}
+```
 
-6. Histórico do cliente
+Para horário livre: `200 OK`.
 
-Método
+### Comparação da regra de telefone
 
-GET
+```text
+PUT /agendamentos/{id}
+→ 400
 
-Endpoint
+PUT /operacional/agendamentos/{id}
+→ 200
+```
 
-/agendamentos/historico?clienteId={id}&de={dataInicial}&ate={dataFinal}
+### Conflito operacional
 
-Resultado esperado
+Esperado: `409 Conflict`.
 
-200 OK
+### Status geral
 
-A resposta deve apresentar os agendamentos do cliente dentro do período solicitado, incluindo seus detalhes e status.
+```http
+PATCH /operacional/agendamentos/{id}/status
+```
 
-7. Agenda operacional
+Esperado: `200 OK`.
 
-Método
+### Status individual
 
-GET
+```http
+PATCH /operacional/agendamentos/{agendamentoId}/servicos/{itemId}/status
+```
 
-Endpoint
+Esperado: `200 OK`.
 
-/operacional/agendamentos?data={data}
+## Consulta de conferência no banco
 
-Resultado esperado
-
-200 OK
-
-A resposta deve apresentar:
-
-horário;
-cliente;
-telefone;
-status do agendamento;
-serviços;
-status individual dos serviços.
-8. Confirmação operacional
-
-Método
-
-PATCH
-
-Endpoint
-
-/operacional/agendamentos/{id}/status
-
-Body
-
-{
-  "status": "CONFIRMADO"
-}
-
-Resultado esperado
-
-200 OK
-
-9. Atualização do status de um serviço
-
-Método
-
-PATCH
-
-Endpoint
-
-/operacional/agendamentos/{agendamentoId}/servicos/{itemId}/status
-
-Body
-
-{
-  "status": "EM_ATENDIMENTO"
-}
-
-Resultado esperado
-
-200 OK
-
-O status deve ser alterado somente para o serviço correspondente.
+```sql
+SELECT
+    a.id AS agendamento_id,
+    a.data,
+    a.horario,
+    a.status AS status_agendamento,
+    c.nome AS cliente,
+    c.telefone,
+    s.nome AS servico,
+    s.duracao,
+    ags.status AS status_servico
+FROM agendamentos a
+INNER JOIN clientes c
+    ON c.id = a.cliente_id
+INNER JOIN agendamento_servicos ags
+    ON ags.agendamento_id = a.id
+INNER JOIN servicos s
+    ON s.id = ags.servico_id
+ORDER BY
+    a.data,
+    a.horario,
+    a.id;
+```

@@ -1,11 +1,15 @@
-# Evidências
-
-Este diretório reúne as evidências de funcionamento do sistema.
+# Evidências da Entrega
 
 ## Prints
 
-Os prints demonstram o funcionamento da API, banco de dados e interfaces.
+Local:
+
+```text
+docs/evidencias/prints/
+```
+
+Consulte [Lista de prints](prints/README.md).
 
 ## Vídeo
 
-O diretório `video` contém as informações referentes ao vídeo de apresentação e demonstração do sistema.
+Consulte [Vídeo de demonstração](video/README.md).
