@@ -282,5 +282,3 @@ O dashboard gerencial semanal e uma issue dedicada de testes unitários não faz
 - auditoria de alterações de agendamento.
 
 ---
-
-Projeto desenvolvido como parte do teste técnico para a vaga de Desenvolvimento de Sistemas.
